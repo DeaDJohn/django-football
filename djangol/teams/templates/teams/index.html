@@ -1,7 +1,48 @@
 {% extends "teams/base.html" %}
 
 {% block content %}
-<p> Contenido </p>
-<a href="{% url 'teams:update_teams' %}">Actualizar paises</a>
-<a href="{% url 'teams:update_players' %}">Actualizar jugadores</a>
+<div class="row pb-12">
+    <div class="text-center">
+        <h1 class="mx-auto text-4xl font-bold">Equipos</h1>
+    </div>
+</div>
+<div class="row text-right mb-8">
+
+    <a class="inline-block px-4 py-2 text-green-500 font-semibold border-2 border-green-500 rounded-md hover:bg-green-700 hover:text-white hover:border-green-700 focus:outline-none focus:ring focus:ring-green-100" href="{% url 'teams:update_teams' %}">Actualizar equipos</a>
+    <a class="inline-block px-4 py-2 text-green-500 font-semibold border-2 border-green-500 rounded-md hover:bg-green-700 hover:text-white hover:border-green-700 focus:outline-none focus:ring focus:ring-green-100" href="{% url 'teams:update_countries' %}">Actualizar paises</a>
+    <a class="inline-block px-4 py-2 text-green-500 font-semibold border-2 border-green-500 rounded-md hover:bg-green-700 hover:text-white hover:border-green-700 focus:outline-none focus:ring focus:ring-green-100" href="{% url 'teams:update_players' %}">Actualizar jugadores</a>
+</div>
+<div class="row">
+    {% if teams %}
+        <div class="grid grid-cols-4 text-center">
+            {% for team in teams %}
+                <a href="#" class="p-4 w-33">
+                    {% if team.image %}
+                    <img class="mx-auto w-1/2 mb-5" src="{{team.image}}" alt="{{team.name}}"/>
+                    {% endif %}
+                    <h4>{{team.name}}</h4>
+                </a>
+            {% endfor %}
+     </div>
+    {% endif %}
+
+</div>
+<div class="row text-center mt-12">
+    {% if teams.has_previous %}
+        <a href="?page={{ teams.previous_page_number }}">Anterior</a>
+    {% endif %}
+
+    {% for page_number in teams.paginator.page_range %}
+        {% if page_number == teams.number %}
+            {{ page_number }}
+        {% else %}
+            <a href="?page={{ page_number }}">{{ page_number }}</a>
+        {% endif %}
+    {% endfor %}
+
+    {% if teams.has_next %}
+        <a href="?page={{ teams.next_page_number }}">Siguiente</a>
+    {% endif %}
+
+</div>
 {% endblock content %}

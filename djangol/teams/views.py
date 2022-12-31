@@ -1,5 +1,6 @@
 from django.shortcuts import render
 import math
+from django.core.paginator import Paginator
 from datetime import datetime
 from .models import Team, Country, Player
 from . import setters
@@ -7,7 +8,17 @@ from . import setters
 # Create your views here.
 def index(request):
     """La pagina de inicio para Learning Log"""
-    return render(request, 'teams/index.html')
+    teams = Team.objects.all().values()
+    # Crea una instancia de Paginator con la lista de elementos y el número de elementos por página
+    paginator = Paginator(teams, 12)
+
+    # Obtén la página actual a partir del parámetro `page` de la request
+    page = request.GET.get('page')
+
+    # Obtén los elementos de la página actual
+    elements = paginator.get_page(page)
+    context = { 'teams': elements}
+    return render(request, 'teams/index.html', context)
 
 
 def update_teams(request):
@@ -49,7 +60,6 @@ def update_players(request):
 
     players = setters.get_players_from_web(teams, countries)
 
-    instancias = []
     jugadores_creados = 0
     jugadores_existentes = 0
     for index, player in players.iterrows():
@@ -59,19 +69,18 @@ def update_players(request):
             birth = datetime.strptime(player['birth'], '%d/%m/%Y')
             birth = birth.strftime('%Y-%m-%d')
         except:
-            # Aquí puedes poner código para manejar el caso en el que la conversión falle
-            # Por ejemplo, asignar un valor por defecto a la variable `sing_date`
             birth = None
+
         print(birth)
         print('sing_date')
         print(player['sing_date'])
+
         try:
             sing_date = datetime.strptime(player['sing_date'], '%d/%m/%Y')
             sing_date = sing_date.strftime('%Y-%m-%d')
         except:
-            # Aquí puedes poner código para manejar el caso en el que la conversión falle
-            # Por ejemplo, asignar un valor por defecto a la variable `sing_date`
             sing_date = None
+
         print(sing_date)
         print('end_contract')
         print(player['end_contract'])
@@ -79,14 +88,13 @@ def update_players(request):
             end_contract = datetime.strptime(player['end_contract'], '%d/%m/%Y')
             end_contract = end_contract.strftime('%Y-%m-%d')
         except:
-            # Aquí puedes poner código para manejar el caso en el que la conversión falle
-            # Por ejemplo, asignar un valor por defecto a la variable `sing_date`
             end_contract = None
 
         print(end_contract)
         print( Team.objects.filter(name=player['id_team']).first() )
         print( player['id_country'])
         print("=====")
+
         player, created = Player.objects.get_or_create(
             team=Team.objects.filter(name=player['id_team']).first(),
             country=Country.objects.filter(name=player['id_country']).first(),
