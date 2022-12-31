@@ -1,5 +1,7 @@
 from django.db import models
+from django.conf import settings
 from PIL import Image
+
 
 # Create your models here.
 class Team(models.Model):
@@ -31,13 +33,12 @@ class Player(models.Model):
     name = models.CharField(max_length=300)
     date_added = models.DateTimeField(auto_now_add=True)
     position = models.CharField(max_length=300)
-    birth = models.CharField(max_length=300)
     age = models.CharField(max_length=300)
-    birth = models.CharField(max_length=300)
+    birth = models.DateField(null=True, blank=True)
     height = models.CharField(max_length=300)
     foot = models.CharField(max_length=300)
-    sing_date = models.CharField(max_length=300)
-    end_contract = models.CharField(max_length=300)
+    sing_date = models.DateField(null=True, blank=True)
+    end_contract = models.DateField(null=True, blank=True)
     market_value = models.CharField(max_length=300)
     image = models.ImageField(upload_to='uploads/%team', height_field=None, width_field=None, null=True, blank=True)
     class Meta:
